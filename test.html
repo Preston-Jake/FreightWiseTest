@@ -6,7 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <title>FreightWise Programming Test</title>
-
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="main.css">
     <script>
         'use strict';
 
@@ -54,13 +55,12 @@
 
         class Test {
             constructor() {
-                this.testResults = document.getElementsByClassName('test-results');
-                this.setResults = new setResults()
+                this.testResults = document.getElementsByClassName('test-results')[0];
+                // this.weatherObj = new Object();
+
             }
 
-
-
-            async run() {
+            async run(test) {
                 console.log(new Date().toISOString(), '[Test]', 'Running the test');
                 // TODO: Make the API call and handle the results
                 //api call example http://api.openweathermap.org/data/2.5/forecast?id=524901&APPID={APIKEY}
@@ -72,7 +72,8 @@
                 //axios Get Call 
                 axios.get(`http://api.openweathermap.org/data/2.5/weather?id=${cityId}&appid=${apiKey}`)
                     .then(function (result) {
-
+                        // console.log(result)
+                        new Test().setResults(result)
                     })
                     .catch(function (error) {
                         // handle error
@@ -84,13 +85,109 @@
                         // always executed
                     });
             }
-
+            //result obj
+            //             data:
+            // base: "stations"
+            // clouds: {all: 1}
+            // cod: 200
+            // coord: {lon: -86.78, lat: 36.03}
+            // dt: 1570729631
+            // id: 4608408
+            // main:
+            // humidity: 54
+            // pressure: 1019
+            // temp: 299.21
+            // temp_max: 301.48
+            // temp_min: 297.04
+            // __proto__: Object
+            // name: "Brentwood"
+            // sys:
+            // country: "US"
+            // id: 4609
+            // sunrise: 1570708154
+            // sunset: 1570749526
+            // type: 1
+            // __proto__: Object
+            // timezone: -18000
+            // visibility: 16093
+            // weather: Array(1)
+            // 0:
+            // description: "clear sky"
+            // icon: "01d"
+            // id: 800
+            // main: "Clear"
+            // __proto__: Object
+            // length: 1
+            // __proto__: Array(0)
+            // wind: {speed: 3.6, deg: 140}
 
             setResults(result) {
-                // console.log("set results")
-                const city = document.createElement('h1');
-                city.innerText = result.data.name;
-                return city
+                //Curr Temp
+                console.log(result)
+
+                function convertTempKtoF(temp) {
+                    return Math.round((temp - 273.15) * (9 / 5) + 32);
+                }
+                // Weather component Header
+                const wHeader = document.createElement('div')
+                wHeader.className = 'weather_header'
+
+                const cityEl = document.createElement('h1');
+                cityEl.innerText = result.data.name;
+                cityEl.className = 'cityEl';
+
+                this.testResults.appendChild(wHeader);
+                wHeader.appendChild(cityEl);
+
+                //Weather Component Main Body
+                const wCondition = document.createElement('div')
+                wCondition.className = 'weather_conditions'
+
+                const iconEl = document.createElement('img');
+                iconEl.src = `/img/${result.data.weather[0].icon}.png`;
+                iconEl.className = 'iconEl'
+
+                const temp = convertTempKtoF(result.data.main.temp);
+                const tempEl = document.createElement('span');
+                tempEl.innerText = `${temp}°`;
+                tempEl.className = 'tempEl';
+
+                wCondition.appendChild(tempEl);
+                wCondition.appendChild(iconEl);
+                this.testResults.appendChild(wCondition)
+
+
+                // Weather Content
+                const weatherEl = document.createElement('h2');
+                weatherEl.innerText = result.data.weather[0].main;
+                weatherEl.className = 'weatherEl'
+
+                this.testResults.appendChild(weatherEl);
+
+                //Weather content details
+
+                const wDetails = document.createElement('div')
+                wDetails.className = 'weather_details'
+
+                const tempMax = convertTempKtoF(result.data.main.temp_max);
+                const tempMaxEl = document.createElement('span');
+                tempMaxEl.innerText = `H: ${tempMax}° `;
+                tempMaxEl.className = 'tempMaxEl';
+
+                const tempMin = convertTempKtoF(result.data.main.temp_min)
+                const tempMinEl = document.createElement('span');
+                tempMinEl.innerText = `L: ${tempMin}° `;
+                tempMinEl.className = 'tempMinEl';
+
+                const weatherDesciptionEl = document.createElement('p');
+                weatherDesciptionEl.innerText = result.data.weather[0].description;
+                weatherDesciptionEl.className = 'weatherDesciptionEl'
+
+                wDetails.appendChild(weatherDesciptionEl);
+                wDetails.appendChild(tempMaxEl);
+                wDetails.appendChild(tempMinEl);
+                this.testResults.appendChild(wDetails)
+
             }
 
 
@@ -161,6 +258,7 @@
         const buttonContainer = document.getElementsByClassName('button-container')[0];
 
         addButtonForTest(buttonContainer, test);
+
     </script>
 </body>
 
