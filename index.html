@@ -78,7 +78,7 @@
                     .catch(function (error) {
                         // handle error
                         console.log(error);
-                        // setError(error);
+                        new Test().setError(error);
 
                     })
                     .finally(function () {
@@ -193,7 +193,9 @@
 
             setError(message) {
                 // TODO: Format the error
-                this.testResults.innerHTML = (message || '').toString();
+                const errorEl = document.createElement('h1');
+                errorEl.interText = message;
+                this.testResults.appendChild(errorEl);
             }
         }
     </script>
